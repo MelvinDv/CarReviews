@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useAuthStore } from '../../stores/auth.js'
 import AuthModal from '../auth/AuthModal.vue'
+import { useI18n } from 'vue-i18n'
 
 defineProps({
   variant: {
@@ -13,6 +14,12 @@ defineProps({
 const auth = useAuthStore()
 const showAuthModal = ref(false)
 const drawerOpen = ref(false)
+const { t, locale } = useI18n()
+
+function toggleLocale() {
+  locale.value = locale.value === 'es' ? 'en' : 'es'
+  localStorage.setItem('locale', locale.value)
+}
 </script>
 
 <template>
@@ -33,9 +40,9 @@ const drawerOpen = ref(false)
 
       <!-- Desktop -->
       <nav class="navbar-links d-none d-md-flex">
-        <a href="#" class="nav-link" :class="`nav-link--${variant}`">Servicios</a>
-        <a href="#" class="nav-link" :class="`nav-link--${variant}`">Sobre Mí</a>
-        <a href="#" class="nav-link" :class="`nav-link--${variant}`">Testimonios</a>
+        <a href="#" class="nav-link" :class="`nav-link--${variant}`">{{ t('nav.services') }}</a>
+        <a href="#" class="nav-link" :class="`nav-link--${variant}`">{{ t('nav.about') }}</a>
+        <a href="#" class="nav-link" :class="`nav-link--${variant}`">{{ t('nav.testimonials') }}</a>
       </nav>
 
       <v-btn
@@ -46,7 +53,7 @@ const drawerOpen = ref(false)
         :class="`login-btn--${variant}`"
         @click="showAuthModal = true"
       >
-        Iniciar sesión
+        {{ t('nav.login') }}
       </v-btn>
 
       <v-menu v-else class="d-none d-md-flex">
@@ -70,9 +77,21 @@ const drawerOpen = ref(false)
             <v-list-item-subtitle style="font-size: 0.75rem;">{{ auth.user?.email }}</v-list-item-subtitle>
           </v-list-item>
           <v-divider class="my-1" />
-          <v-list-item prepend-icon="mdi-logout" title="Cerrar sesión" @click="auth.signOut()" />
+          <v-list-item prepend-icon="mdi-logout" :title="t('nav.logout')" @click="auth.signOut()" />
         </v-list>
       </v-menu>
+
+      <!-- Language toggle -->
+      <v-btn
+        variant="text"
+        size="small"
+        class="ml-4 locale-btn"
+        :class="`locale-btn--${variant}`"
+        @click="toggleLocale"
+      >
+        <span class="locale-flag">{{ locale === 'es' ? '🇺🇸' : '🇲🇽' }}</span>
+        <span class="locale-code">{{ locale === 'es' ? 'EN' : 'ES' }}</span>
+      </v-btn>
 
       <!-- Mobile hamburger -->
       <v-btn
@@ -107,9 +126,9 @@ const drawerOpen = ref(false)
     <v-divider />
 
     <v-list nav>
-      <v-list-item title="Servicios" href="#" @click="drawerOpen = false" />
-      <v-list-item title="Sobre Mí" href="#" @click="drawerOpen = false" />
-      <v-list-item title="Testimonios" href="#" @click="drawerOpen = false" />
+      <v-list-item :title="t('nav.services')" href="#" @click="drawerOpen = false" />
+      <v-list-item :title="t('nav.about')" href="#" @click="drawerOpen = false" />
+      <v-list-item :title="t('nav.testimonials')" href="#" @click="drawerOpen = false" />
     </v-list>
 
     <v-divider />
@@ -123,7 +142,7 @@ const drawerOpen = ref(false)
           class="auth-drawer-btn"
           @click="showAuthModal = true; drawerOpen = false"
         >
-          Iniciar sesión
+          {{ t('nav.login') }}
         </v-btn>
       </template>
       <template v-else>
@@ -146,7 +165,7 @@ const drawerOpen = ref(false)
           prepend-icon="mdi-logout"
           @click="auth.signOut(); drawerOpen = false"
         >
-          Cerrar sesión
+          {{ t('nav.logout') }}
         </v-btn>
       </template>
     </div>
@@ -213,6 +232,28 @@ const drawerOpen = ref(false)
 
 .user-avatar { transition: opacity 0.2s; }
 .user-avatar:hover { opacity: 0.85; }
+
+.locale-btn {
+  text-transform: none;
+  font-weight: 700;
+  font-size: 0.8rem;
+  min-width: 36px;
+  letter-spacing: 0.5px;
+}
+
+.locale-btn--transparent { color: rgba(255,255,255,0.9) !important; }
+.locale-btn--light { color: #1a1a1a !important; }
+
+.locale-flag {
+  font-size: 1rem;
+  line-height: 1;
+  margin-right: 4px;
+}
+
+.locale-code {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
 
 /* Drawer */
 .drawer-header {

@@ -1,10 +1,12 @@
 <script setup>
 import { ref } from 'vue'
 import { useAuthStore } from '../../stores/auth.js'
+import { useI18n } from 'vue-i18n'
 
 defineProps({ modelValue: Boolean })
 const emit = defineEmits(['update:modelValue'])
 
+const { t } = useI18n()
 const auth = useAuthStore()
 const tab = ref('login')
 const loading = ref(false)
@@ -34,7 +36,7 @@ async function handleLogin() {
     await auth.signIn(loginForm.value.email, loginForm.value.password)
     close()
   } catch {
-    errorMsg.value = 'Credenciales incorrectas. Intenta de nuevo.'
+    errorMsg.value = t('auth.loginError')
   } finally {
     loading.value = false
   }
@@ -48,7 +50,7 @@ async function handleRegister() {
     registered.value = true
     registerForm.value = { name: '', email: '', password: '' }
   } catch (e) {
-    errorMsg.value = e.message ?? 'Error al crear la cuenta.'
+    errorMsg.value = e.message ?? t('auth.registerError')
   } finally {
     loading.value = false
   }
@@ -65,16 +67,16 @@ async function handleRegister() {
           <div class="success-icon-wrapper mb-6">
             <v-icon color="#6aaa64" size="72">mdi-check-circle-outline</v-icon>
           </div>
-          <h2 class="success-title mb-4">¡Cuenta creada exitosamente!</h2>
-          <p class="success-subtitle mb-8">Revisa el correo electrónico para confirmar la cuenta</p>
-          <v-btn variant="outlined" class="close-btn" @click="close">Cerrar</v-btn>
+          <h2 class="success-title mb-4">{{ t('auth.successTitle') }}</h2>
+          <p class="success-subtitle mb-8">{{ t('auth.successMessage') }}</p>
+          <v-btn variant="outlined" class="close-btn" @click="close">{{ t('auth.close') }}</v-btn>
         </div>
 
         <!-- Form state -->
         <template v-else>
           <div class="d-flex align-center justify-space-between mb-6">
             <h2 class="modal-title">
-              {{ tab === 'login' ? 'Iniciar sesión' : 'Crear cuenta' }}
+              {{ tab === 'login' ? t('auth.login') : t('auth.createAccount') }}
             </h2>
             <v-btn icon variant="text" size="small" @click="close">
               <v-icon>mdi-close</v-icon>
@@ -83,10 +85,10 @@ async function handleRegister() {
 
           <div class="tab-switcher mb-6">
             <button class="tab-btn" :class="{ active: tab === 'login' }" @click="switchTab('login')">
-              Iniciar sesión
+              {{ t('auth.login') }}
             </button>
             <button class="tab-btn" :class="{ active: tab === 'register' }" @click="switchTab('register')">
-              Registrarse
+              {{ t('auth.register') }}
             </button>
           </div>
 
@@ -96,18 +98,18 @@ async function handleRegister() {
 
           <!-- Login -->
           <form v-if="tab === 'login'" @submit.prevent="handleLogin">
-            <div class="field-label">Correo</div>
+            <div class="field-label">{{ t('auth.email') }}</div>
             <v-text-field
               v-model="loginForm.email"
               type="email"
-              placeholder="tu@correo.com"
+              :placeholder="t('auth.emailPlaceholder')"
               variant="outlined"
               density="comfortable"
               hide-details
               class="mb-4"
               required
             />
-            <div class="field-label">Contraseña</div>
+            <div class="field-label">{{ t('auth.password') }}</div>
             <v-text-field
               v-model="loginForm.password"
               type="password"
@@ -119,38 +121,38 @@ async function handleRegister() {
               required
             />
             <v-btn type="submit" color="primary" block flat :loading="loading" class="auth-btn">
-              Iniciar sesión
+              {{ t('auth.login') }}
             </v-btn>
           </form>
 
           <!-- Register -->
           <form v-else @submit.prevent="handleRegister">
-            <div class="field-label">Nombre</div>
+            <div class="field-label">{{ t('auth.name') }}</div>
             <v-text-field
               v-model="registerForm.name"
-              placeholder="Tu nombre"
+              :placeholder="t('auth.namePlaceholder')"
               variant="outlined"
               density="comfortable"
               hide-details
               class="mb-4"
               required
             />
-            <div class="field-label">Correo</div>
+            <div class="field-label">{{ t('auth.email') }}</div>
             <v-text-field
               v-model="registerForm.email"
               type="email"
-              placeholder="tu@correo.com"
+              :placeholder="t('auth.emailPlaceholder')"
               variant="outlined"
               density="comfortable"
               hide-details
               class="mb-4"
               required
             />
-            <div class="field-label">Contraseña</div>
+            <div class="field-label">{{ t('auth.password') }}</div>
             <v-text-field
               v-model="registerForm.password"
               type="password"
-              placeholder="Mínimo 6 caracteres"
+              :placeholder="t('auth.passwordPlaceholder')"
               variant="outlined"
               density="comfortable"
               hide-details
@@ -158,7 +160,7 @@ async function handleRegister() {
               required
             />
             <v-btn type="submit" color="primary" block flat :loading="loading" class="auth-btn">
-              Crear cuenta
+              {{ t('auth.createAccount') }}
             </v-btn>
           </form>
         </template>

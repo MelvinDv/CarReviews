@@ -1,4 +1,7 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 const repairs = [
   {
     id: 1,
@@ -43,10 +46,8 @@ function calcTotal(repair) {
   <section class="pricing-section">
     <v-container style="max-width: 1200px;">
       <div class="section-header mb-6">
-        <h2 class="section-title">Repair Pricing</h2>
-        <p class="section-subtitle">
-          Estimated costs for common repairs and maintenance. Prices may vary by location and service provider.
-        </p>
+        <h2 class="section-title">{{ t('pricing.title') }}</h2>
+        <p class="section-subtitle">{{ t('pricing.subtitle') }}</p>
       </div>
 
       <v-alert
@@ -58,7 +59,7 @@ function calcTotal(repair) {
         <template #prepend>
           <v-icon color="info" class="mr-3">mdi-information-outline</v-icon>
         </template>
-        These prices are sourced from Vehicle Database Repair Pricing API and represent average costs. Always get quotes from multiple service providers before making a decision.
+        {{ t('pricing.alert') }}
       </v-alert>
 
       <v-row :gutter="24">
@@ -74,12 +75,12 @@ function calcTotal(repair) {
 
             <div class="cost-table">
               <div class="cost-row">
-                <span class="cost-label">Parts Cost</span>
+                <span class="cost-label">{{ t('pricing.partsCost') }}</span>
                 <span class="cost-value">{{ formatRange(repair.partsCost.min, repair.partsCost.max) }}</span>
               </div>
               <v-divider class="my-2" />
               <div class="cost-row">
-                <span class="cost-label">Labor Cost</span>
+                <span class="cost-label">{{ t('pricing.laborCost') }}</span>
                 <span class="cost-value">{{ formatRange(repair.laborCost.min, repair.laborCost.max) }}</span>
               </div>
             </div>
@@ -87,7 +88,7 @@ function calcTotal(repair) {
             <div class="total-row">
               <div class="total-label">
                 <v-icon size="16" color="#1565C0" class="mr-1">mdi-currency-usd</v-icon>
-                Total Estimated Cost
+                {{ t('pricing.totalCost') }}
               </div>
               <span class="total-value">{{ calcTotal(repair) }}</span>
             </div>

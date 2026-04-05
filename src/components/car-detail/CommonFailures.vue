@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../../stores/auth.js'
 import { getFailures, createFailure, castVote, getUserVotes } from '../../services/failures.js'
 import AuthModal from '../auth/AuthModal.vue'
@@ -8,6 +9,7 @@ const props = defineProps({
   vehicleId: { type: Number, default: null },
 })
 
+const { t } = useI18n()
 const auth = useAuthStore()
 const showAuthModal = ref(false)
 
@@ -16,14 +18,14 @@ const search = ref('')
 const selectedStatus = ref(null)
 const selectedSort = ref('most-voted')
 
-const statusOptions = [
-  { title: 'Resueltos', value: 'resolved' },
-  { title: 'No resueltos', value: 'open' },
-]
-const sortOptions = [
-  { title: 'Más votado', value: 'most-voted' },
-  { title: 'Menos votado', value: 'least-voted' },
-]
+const statusOptions = computed(() => [
+  { title: t('failures.resolved'), value: 'resolved' },
+  { title: t('failures.unresolved'), value: 'open' },
+])
+const sortOptions = computed(() => [
+  { title: t('failures.mostVoted'), value: 'most-voted' },
+  { title: t('failures.leastVoted'), value: 'least-voted' },
+])
 
 // Failures list
 const failures = ref([])
@@ -102,7 +104,7 @@ async function submitFailure() {
     currentTo.value = pageSize - 1
     await fetchFailures()
   } catch {
-    submitError.value = 'Error al publicar. Intenta de nuevo.'
+    submitError.value = t('failures.error')
   } finally {
     submitting.value = false
   }
@@ -136,16 +138,16 @@ function formatDate(iso) {
       <div class="section-header mb-6">
         <h2 class="section-title">
           <v-icon color="#E53935" size="26" class="mr-2" style="vertical-align: middle;">mdi-alert-circle</v-icon>
-          Common Failures &amp; Solutions
+          {{ t('failures.title') }}
         </h2>
-        <p class="section-subtitle">Frequent issues owners report and fixes found by the community.</p>
+        <p class="section-subtitle">{{ t('failures.subtitle') }}</p>
       </div>
 
       <!-- Inline form -->
       <div class="failure-form mb-8">
         <v-text-field
           v-model="form.title"
-          placeholder="Título de la falla"
+          :placeholder="t('failures.titlePlaceholder')"
           variant="outlined"
           density="comfortable"
           hide-details
@@ -156,7 +158,7 @@ function formatDate(iso) {
         />
         <v-textarea
           v-model="form.problem"
-          placeholder="Describe el problema..."
+          :placeholder="t('failures.problemPlaceholder')"
           variant="outlined"
           rows="3"
           hide-details
@@ -168,7 +170,7 @@ function formatDate(iso) {
 
         <v-checkbox
           v-model="form.hasSolution"
-          label="Ya encontré una solución"
+          :label="t('failures.solutionFound')"
           density="compact"
           hide-details
           class="mb-2"
@@ -180,7 +182,7 @@ function formatDate(iso) {
           <v-textarea
             v-if="form.hasSolution"
             v-model="form.solution"
-            placeholder="Describe la solución..."
+            :placeholder="t('failures.solutionPlaceholder')"
             variant="outlined"
             rows="3"
             hide-details
@@ -202,7 +204,7 @@ function formatDate(iso) {
             :disabled="auth.isLoggedIn && (!form.title || !form.problem)"
             @click="submitFailure"
           >
-            Reportar
+            {{ t('failures.submit') }}
           </v-btn>
         </div>
       </div>
@@ -213,7 +215,7 @@ function formatDate(iso) {
       <div class="filters-bar mb-4">
         <v-text-field
           v-model="search"
-          placeholder="Buscar"
+          :placeholder="t('failures.search')"
           variant="outlined"
           density="compact"
           hide-details
@@ -247,7 +249,7 @@ function formatDate(iso) {
         />
       </div>
 
-      <p class="showing-label mb-4">Mostrando {{ filteredFailures.length }} fallas</p>
+      <p class="showing-label mb-4">{{ t('failures.showing', { count: filteredFailures.length }) }}</p>
 
       <!-- List -->
       <div v-if="loadingFailures" class="d-flex justify-center py-8">
@@ -255,7 +257,7 @@ function formatDate(iso) {
       </div>
 
       <div v-else-if="filteredFailures.length === 0" class="text-center py-8">
-        <p class="text-medium-emphasis">No hay fallas reportadas aún. ¡Sé el primero!</p>
+        <p class="text-medium-emphasis">{{ t('failures.empty') }}</p>
       </div>
 
       <div v-else class="issues-list">
@@ -287,7 +289,7 @@ function formatDate(iso) {
                 variant="tonal"
                 class="status-chip"
               >
-                {{ failure.status === 'resolved' ? 'Resolved' : 'Open' }}
+                {{ failure.status === 'resolved' ? t('failures.statusResolved') : t('failures.statusOpen') }}
               </v-chip>
             </div>
 
@@ -296,12 +298,12 @@ function formatDate(iso) {
             </div>
 
             <div class="issue-block">
-              <span class="block-label">Problem:</span>
+              <span class="block-label">{{ t('failures.problem') }}</span>
               <span class="block-text">{{ failure.problem }}</span>
             </div>
 
             <div v-if="failure.solution" class="issue-block">
-              <span class="block-label">Solution:</span>
+              <span class="block-label">{{ t('failures.solution') }}</span>
               <span class="block-text">{{ failure.solution }}</span>
             </div>
           </div>
@@ -316,7 +318,7 @@ function formatDate(iso) {
           :loading="loadingMore"
           @click="loadMore"
         >
-          Load more
+          {{ t('failures.loadMore') }}
         </v-btn>
       </div>
 

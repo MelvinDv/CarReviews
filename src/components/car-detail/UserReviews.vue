@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../../stores/auth.js'
 import { getReviews, createReview } from '../../services/reviews.js'
 import AuthModal from '../auth/AuthModal.vue'
@@ -9,6 +10,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['review-added'])
 
+const { t } = useI18n()
 const auth = useAuthStore()
 const showAuthModal = ref(false)
 
@@ -67,7 +69,7 @@ async function submitReview() {
     await fetchReviews()
     emit('review-added')
   } catch (e) {
-    submitError.value = 'Error al publicar la reseña. Intenta de nuevo.'
+    submitError.value = t('reviews.error')
   } finally {
     submitting.value = false
   }
@@ -86,8 +88,8 @@ function formatDate(iso) {
     <v-container style="max-width: 1200px;">
 
       <div class="section-header mb-6">
-        <h2 class="section-title">User Reviews</h2>
-        <p class="section-subtitle">Read what our users have to say about their experience</p>
+        <h2 class="section-title">{{ t('reviews.title') }}</h2>
+        <p class="section-subtitle">{{ t('reviews.subtitle') }}</p>
       </div>
 
       <!-- Inline review form -->
@@ -111,7 +113,7 @@ function formatDate(iso) {
         <!-- Title -->
         <v-text-field
           v-model="form.title"
-          placeholder="Título de tu reseña"
+          :placeholder="t('reviews.titlePlaceholder')"
           variant="outlined"
           density="comfortable"
           hide-details
@@ -124,7 +126,7 @@ function formatDate(iso) {
         <!-- Body -->
         <v-textarea
           v-model="form.body"
-          placeholder="Cuéntanos tu experiencia con este vehículo..."
+          :placeholder="t('reviews.bodyPlaceholder')"
           variant="outlined"
           rows="3"
           hide-details
@@ -147,7 +149,7 @@ function formatDate(iso) {
             :disabled="auth.isLoggedIn && (!form.rating || !form.title || !form.body)"
             @click="submitReview"
           >
-            Publicar reseña
+            {{ t('reviews.submit') }}
           </v-btn>
         </div>
       </div>
@@ -160,7 +162,7 @@ function formatDate(iso) {
       </div>
 
       <div v-else-if="reviews.length === 0" class="text-center py-8">
-        <p class="text-medium-emphasis">Aún no hay reseñas. ¡Sé el primero!</p>
+        <p class="text-medium-emphasis">{{ t('reviews.empty') }}</p>
       </div>
 
       <div v-else class="reviews-list">
@@ -206,7 +208,7 @@ function formatDate(iso) {
           :loading="loadingMore"
           @click="loadMore"
         >
-          Load more
+          {{ t('reviews.loadMore') }}
         </v-btn>
       </div>
 

@@ -1,4 +1,7 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 defineProps({
   car: {
     type: Object,
@@ -30,7 +33,7 @@ defineProps({
           <div class="rating-badge">
             <span class="rating-number">{{ car.rating ?? '—' }}</span>
             <v-icon color="#FFC107" size="18">mdi-star</v-icon>
-            <div class="rating-label">{{ car.reviewCount }} {{ car.reviewCount === 1 ? 'review' : 'reviews' }}</div>
+            <div class="rating-label">{{ car.reviewCount }} {{ car.reviewCount === 1 ? t('hero.review') : t('hero.reviews') }}</div>
           </div>
         </div>
       </v-container>

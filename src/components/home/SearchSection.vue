@@ -2,6 +2,8 @@
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import AppNavbar from '../car-detail/AppNavbar.vue'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { getMakes, getModels, getYears } from '../../services/carquery.js'
 
 const router = useRouter()
@@ -52,21 +54,18 @@ function search() {
   <section class="search-section">
     <v-container style="max-width: 800px" class="text-center">
       <h1 class="search-title">
-        Searching for a car?<br />
-        <span class="search-title-bold">We'll help you find the best option!</span>
+        {{ t('home.title') }}<br />
+        <span class="search-title-bold">{{ t('home.subtitle') }}</span>
       </h1>
-      <p class="search-subtitle">
-        Discover real reviews, repair costs, and common failures from<br />
-        actual owners before making your decision.
-      </p>
+      <p class="search-subtitle">{{ t('home.description') }}</p>
 
       <v-card class="search-card mt-8" rounded="lg" elevation="0">
         <v-card-text class="pa-8">
-          <h3 class="card-title mb-6">Find Your Vehicle</h3>
+          <h3 class="card-title mb-6">{{ t('home.findVehicle') }}</h3>
 
           <v-row>
             <v-col cols="12" md="4">
-              <div class="field-label">Make</div>
+              <div class="field-label">{{ t('home.make') }}</div>
               <v-autocomplete
                 v-model="selectedMake"
                 :items="makes"
@@ -81,7 +80,7 @@ function search() {
               />
             </v-col>
             <v-col cols="12" md="4">
-              <div class="field-label">Model</div>
+              <div class="field-label">{{ t('home.model') }}</div>
               <v-autocomplete
                 v-model="selectedModel"
                 :items="models"
@@ -97,7 +96,7 @@ function search() {
               />
             </v-col>
             <v-col cols="12" md="4">
-              <div class="field-label">Year</div>
+              <div class="field-label">{{ t('home.year') }}</div>
               <v-autocomplete
                 v-model="selectedYear"
                 :items="years"
@@ -121,7 +120,7 @@ function search() {
             :disabled="!selectedMake || !selectedModel || !selectedYear"
             @click="search"
           >
-            Search Vehicle
+            {{ t('home.search') }}
           </v-btn>
         </v-card-text>
       </v-card>
