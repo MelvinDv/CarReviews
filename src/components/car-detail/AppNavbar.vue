@@ -40,7 +40,7 @@ function toggleLocale() {
 
       <!-- Desktop -->
       <nav class="navbar-links d-none d-md-flex">
-        <a href="#" class="nav-link" :class="`nav-link--${variant}`">{{ t('nav.services') }}</a>
+        <router-link to="/marketplace" class="nav-link" :class="`nav-link--${variant}`">{{ t('nav.marketplace') }}</router-link>
         <a href="#" class="nav-link" :class="`nav-link--${variant}`">{{ t('nav.about') }}</a>
         <a href="#" class="nav-link" :class="`nav-link--${variant}`">{{ t('nav.testimonials') }}</a>
       </nav>
@@ -126,7 +126,7 @@ function toggleLocale() {
     <v-divider />
 
     <v-list nav>
-      <v-list-item :title="t('nav.services')" href="#" @click="drawerOpen = false" />
+      <v-list-item :title="t('nav.marketplace')" to="/marketplace" @click="drawerOpen = false" />
       <v-list-item :title="t('nav.about')" href="#" @click="drawerOpen = false" />
       <v-list-item :title="t('nav.testimonials')" href="#" @click="drawerOpen = false" />
     </v-list>
